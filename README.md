@@ -7,16 +7,11 @@ Step 1 - Run with docker-compose
 ```bash
 docker-compose up -d
 ```
-Step 2 - Go to MinIO pod/container
-
-mc alias set myminio http://localhost:9000 minio minio123
-mc mb myminio/iceberg
-
-Step 3 - Go to the running trino container
+Step 2 - Go to the running trino container
 ```bash
 docker container exec -it iceberg-stack-docker-trino-coordinator-1 trino
 ```
-Step 4 -  Create schema and table and play around with trino
+Step 3 -  Create schema and table and play around with trino
 ```sql
 CREATE SCHEMA iceberg.test
 WITH (location = 's3a://iceberg/');
@@ -27,4 +22,4 @@ WITH (
 ) 
 AS SELECT * FROM tpch.tiny.customer;
 ```
-Step 5: See the Trino UI at localhost:8080.
+Step 4: See the Trino UI at localhost:8080.

@@ -1,7 +1,7 @@
 ## Run Locally with Docker-compose
-The implementation with docker-compose is referred to https://github.com/bitsondatadev/trino-getting-started/tree/main/hive/trino-minio 
-with the help of https://github.com/bitsondatadev/hive-metastore/pull/2/commits to build a Hive Metastore image to
-support PostgresDB.
+Motivated by these repos:
+- https://github.com/bitsondatadev/trino-getting-started/tree/main/hive/trino-minio
+- https://github.com/sensei23/trino-hive-docker
 
 Step 1 - Run with docker-compose
 ```bash

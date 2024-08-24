@@ -12,11 +12,25 @@ Step 2 - Go to the running trino container
 docker container exec -it iceberg-stack-docker-trino-coordinator-1 trino
 ```
 Step 3 -  Create schema and table and play around with trino
+
+- S3
 ```sql
 CREATE SCHEMA iceberg.test
 WITH (location = 's3a://iceberg/');
 
 CREATE TABLE iceberg.test.customer
+WITH (
+    format = 'ORC'
+) 
+AS SELECT * FROM tpch.tiny.customer;
+```
+
+- GCS:
+```sql
+CREATE SCHEMA iceberg.gcs_test
+WITH (location = '${gcs_location}');
+
+CREATE TABLE iceberg.gcs_test.customer_test
 WITH (
     format = 'ORC'
 ) 

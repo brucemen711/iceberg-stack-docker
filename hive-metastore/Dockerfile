@@ -19,6 +19,9 @@ RUN curl -L https://downloads.apache.org/hive/hive-standalone-metastore-${METAST
     rm -rf postgresql-42.4.0.jar && \
     rm -rf hive-exec-${METASTORE_VERSION}.jar
 
+RUN curl -L --output $HADOOP_HOME/share/hadoop/common/lib/gcs-connector-hadoop3-latest.jar https://storage.googleapis.com/hadoop-lib/gcs/gcs-connector-hadoop3-latest.jar
+RUN apt-get -y install gettext-base
+
 COPY scripts/entrypoint.sh /entrypoint.sh
 
 

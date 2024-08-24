@@ -18,38 +18,20 @@
     </property>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:postgresql://postgres:5432/hive_db</value>
+        <value>${METASTORE_DB_CONNECTION_URL}</value>
     </property>
     <property>
         <name>javax.jdo.option.ConnectionUserName</name>
-        <value>admin</value>
+        <value>${METASTORE_DB_CONNECTION_USER}</value>
     </property>
     <property>
         <name>javax.jdo.option.ConnectionPassword</name>
-        <value>admin</value>
+        <value>${METASTORE_DB_CONNECTION_PASSWORD}</value>
     </property>
     <!-- <property>
         <name>metastore.try.direct.sql.ddl</name>
         <value>false</value>
     </property> -->
-
-
-    <property>
-        <name>fs.s3a.access.key</name>
-        <value>minio</value>
-    </property>
-    <property>
-        <name>fs.s3a.secret.key</name>
-        <value>minio123</value>
-    </property>
-    <property>
-        <name>fs.s3a.endpoint</name>
-        <value>http://minio:9000</value>
-    </property>
-    <property>
-        <name>fs.s3a.path.style.access</name>
-        <value>true</value>
-    </property>
 
     <!-- Enable ACID support -->
     <property>

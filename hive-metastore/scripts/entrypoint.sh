@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# REPLACE ENVS
+envsubst < /opt/apache-hive-metastore-3.0.0-bin/conf/metastore-site.xml.template > /opt/apache-hive-metastore-3.0.0-bin/conf/metastore-site.xml
+envsubst < /opt/apache-hive-metastore-3.0.0-bin/conf/core-site.xml.template > /opt/apache-hive-metastore-3.0.0-bin/conf/core-site.xml
+
+
 export HADOOP_HOME=/opt/hadoop-3.2.0
 export HADOOP_CLASSPATH=${HADOOP_HOME}/share/hadoop/tools/lib/aws-java-sdk-bundle-1.11.375.jar:${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-aws-3.2.0.jar
 export JAVA_HOME=/usr/local/openjdk-8

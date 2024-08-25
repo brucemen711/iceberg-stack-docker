@@ -1,0 +1,1 @@
+helm repo add trino https://trinodb.github.io/charts/

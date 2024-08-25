@@ -1,0 +1,283 @@
+nameOverride: ""
+coordinatorNameOverride:
+workerNameOverride:
+
+imagePullSecrets: []
+env:
+- name: GCS_PROJECT_ID
+  value: ""
+- name: GCS_JSON_KEY_FILE_PATH
+  value: ""
+- name: GCS_DEFAULT_PATH
+  value: ""
+- name: AWS_S3_ENDPOINT
+  value: "http://minio:9000"
+- name: AWS_S3_ACCESS_KEY
+  value: "minio"
+- name: AWS_S3_SECRET_KEY
+  value: "minio123"
+- name: METASTORE_THRIFT_URIS
+  value: "thrift://hive-metastore:9083"
+- name: METASTORE_DB_CONNECTION_URL
+  value: "jdbc:postgresql://postgres:5432/hive_db"
+- name: METASTORE_DB_CONNECTION_USER
+  value: "admin"
+- name: METASTORE_DB_CONNECTION_PASSWORD
+  value: "admin"
+
+additionalCatalogs:
+  iceberg_aws: |
+    connector.name=iceberg
+    hive.metastore.uri=${ENV:METASTORE_THRIFT_URIS}
+    hive.metastore.username=
+
+    # AWS
+    hive.s3.path-style-access=true
+    hive.s3.endpoint=${ENV:AWS_S3_ENDPOINT}
+    hive.s3.aws-access-key=${ENV:AWS_S3_ACCESS_KEY}
+    hive.s3.aws-secret-key=${ENV:AWS_S3_SECRET_KEY}
+
+    #iceberg
+    iceberg.file-format=ORC
+    iceberg.compression-codec=ZSTD
+  # iceberg_gcp: |
+  #   connector.name=iceberg
+  #   hive.metastore.uri=${ENV:METASTORE_THRIFT_URIS}
+  #   hive.metastore.username=
+
+  #   # GCS
+  #   fs.native-gcs.enabled=true
+  #   gcs.project-id=${ENV:GCS_PROJECT_ID}
+  #   gcs.json-key-file-path=${ENV:GCS_JSON_KEY_FILE_PATH}
+
+  #   #iceberg
+  #   iceberg.file-format=ORC
+  #   iceberg.compression-codec=ZSTD
+
+image:
+  # -- Image registry, defaults to empty, which results in DockerHub usage
+  registry: ""
+  # -- Repository location of the Trino image, typically `organization/imagename`
+  repository: trinodb/trino
+  # -- Image tag, defaults to the Trino release version specified as `appVersion` from Chart.yaml
+  tag: "454"
+  # -- Optional digest value of the image specified as `sha256:abcd...`. A specified value overrides `tag`.
+  digest: ""
+  # -- When true, only the content in `repository` is used as image reference
+  useRepositoryAsSoleImageReference: false
+  pullPolicy: IfNotPresent
+
+server:
+  workers: 0
+  node:
+    environment: production
+    dataDir: /data/trino
+    pluginDir: /usr/lib/trino/plugin
+  log:
+    trino:
+      level: INFO
+  config:
+    path: /etc/trino
+    http:
+      port: 8080
+    https:
+      enabled: false
+      port: 8443
+      keystore:
+        path: ""
+    # -- Trino supports multiple [authentication
+    # types](https://trino.io/docs/current/security/authentication-types.html):
+    # PASSWORD, CERTIFICATE, OAUTH2, JWT, KERBEROS.
+    authenticationType: ""
+    query:
+      maxMemory: "4GB"
+  exchangeManager:
+    name: "filesystem"
+    baseDir: "/tmp/trino-local-file-system-exchange-manager"
+  workerExtraConfig: ""
+  coordinatorExtraConfig: ""
+  autoscaling:
+    enabled: false
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+    behavior: {}
+
+accessControl: {}
+
+additionalNodeProperties:
+- node.environment=prod
+- node.data-dir=/data/trino
+- plugin.dir=/usr/lib/trino/plugin
+
+
+additionalConfigProperties:
+- coordinator=true
+- node-scheduler.include-coordinator=true
+# - http-server.http.port=8080
+
+additionalLogProperties: []
+
+additionalExchangeManagerProperties: []
+
+eventListenerProperties: []
+
+# env -- additional environment variables added to every pod, specified as a list with explicit values
+# @raw
+# Example:
+# ```yaml
+#  - name: NAME
+#    value: "value"
+# ```
+
+envFrom: []
+# envFrom -- additional environment variables added to every pod, specified as a list of either ConfigMap or Secret references
+# @raw
+# Example:
+# ```yaml
+#   - secretRef:
+#     name: extra-secret
+# ```
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+
+service:
+  annotations: {}
+  type: ClusterIP
+  port: 8080
+  # service.nodePort -- The port the service listens on the host, for NodePort type. If not set, Kubernetes will [allocate a port automatically](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport-custom-port).
+  nodePort: ""
+
+auth: {}
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: false
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # -- Annotations to add to the service account
+  annotations: {}
+
+configMounts: []
+
+secretMounts: []
+
+coordinator:
+  jvm:
+    maxHeapSize: "8G"
+    gcMethod:
+      type: "UseG1GC"
+      g1:
+        heapRegionSize: "32M"
+
+  config:
+    memory:
+      heapHeadroomPerNode: ""
+    query:
+      maxMemoryPerNode: "1GB"
+
+  additionalJVMConfig: []
+
+  additionalExposedPorts: {}
+
+  resources:
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+  readinessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+
+  lifecycle: {}
+
+  terminationGracePeriodSeconds: 30
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+worker:
+  jvm:
+    maxHeapSize: "8G"
+    gcMethod:
+      type: "UseG1GC"
+      g1:
+        heapRegionSize: "32M"
+
+  config:
+    memory:
+      heapHeadroomPerNode: ""
+    query:
+      maxMemoryPerNode: "1GB"
+
+  additionalJVMConfig: []
+
+  additionalExposedPorts: {}
+
+  resources:
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  livenessProbe: {}
+
+  readinessProbe: {}
+
+  lifecycle: {}
+
+  terminationGracePeriodSeconds: 30
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+kafka:
+  mountPath: "/etc/trino/schemas"
+  tableDescriptions: {}
+
+jmx:
+  # -- Set to true to enable the RMI server to expose Trino's [JMX metrics](https://trino.io/docs/current/admin/jmx.html).
+  enabled: false
+
+serviceMonitor:
+  # serviceMonitor.enabled -- Set to true to create resources for the [prometheus-operator](https://github.com/prometheus-operator/prometheus-operator).
+  enabled: false
+  # serviceMonitor.labels -- Labels for serviceMonitor, so that Prometheus can select it
+  labels:
+    prometheus: kube-prometheus
+  # serviceMonitor.interval -- The serviceMonitor web endpoint interval
+  interval: "30s"
+
+# -- Labels that get applied to every resource's metadata
+commonLabels: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts: []
+  tls: []

@@ -1,0 +1,7 @@
+global:
+  postgresql:
+    auth:
+      username: admin
+      password: admin
+      database: hive_db
+      postgresPassword: admin

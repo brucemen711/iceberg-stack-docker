@@ -23,7 +23,7 @@ RUN curl -L --output $HADOOP_HOME/share/hadoop/common/lib/gcs-connector-hadoop3-
 RUN apt-get -y install gettext-base
 
 COPY scripts/entrypoint.sh /entrypoint.sh
-
+COPY conf /opt/apache-hive-metastore-3.0.0-bin/conf
 
 RUN groupadd -r hive --gid=1000 && \
     useradd -r -g hive --uid=1000 -d ${HIVE_HOME} hive && \

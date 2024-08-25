@@ -1,0 +1,6 @@
+extraEnvVars:
+  - name: MINIO_LOG_LEVEL
+    value: DEBUG
+auth:
+  rootUser: minio
+  rootPassword: minio123
